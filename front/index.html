@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRM</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>CRM</h1>
+    <p>Gestion des clients</p>
+  </header>
+
+  <main>
+    <section class="carte">
+      <h2>Nouveau client</h2>
+      <form id="formulaire-client">
+        <label for="nom">Nom</label>
+        <input id="nom" name="nom" type="text" required>
+
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required>
+
+        <label for="entreprise">Entreprise</label>
+        <input id="entreprise" name="entreprise" type="text" required>
+
+        <button type="submit">Ajouter</button>
+      </form>
+    </section>
+
+    <section class="carte">
+      <h2>Clients</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Entreprise</th>
+          </tr>
+        </thead>
+        <tbody id="liste-clients">
+          <tr>
+            <td colspan="3">Aucun client pour le moment.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

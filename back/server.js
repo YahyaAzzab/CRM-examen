@@ -8,14 +8,8 @@ require("dotenv").config({ path: path.join(__dirname, ".env") });
 const PORT = 3000;
 const FRONT = path.join(__dirname, "..", "front");
 const RACINE_FRONT = FRONT.endsWith(path.sep) ? FRONT : FRONT + path.sep;
-const uri = process.env.MONGODB_URI;
 
-if (!uri) {
-  console.error("Variable MONGODB_URI manquante. Copie back/.env.example vers back/.env");
-  process.exit(1);
-}
-
-const client = new MongoClient(uri);
+let connexion;
 
 const TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -69,8 +63,22 @@ async function servirFront(res, pathname) {
   }
 }
 
+function obtenirClient() {
+  if (!process.env.MONGODB_URI) {
+    return Promise.reject(new Error("MONGODB_URI manquante"));
+  }
+
+  if (!connexion) {
+    const mongo = new MongoClient(process.env.MONGODB_URI);
+    connexion = mongo.connect();
+  }
+
+  return connexion;
+}
+
 async function gererApi(req, res, pathname) {
-  const collection = client.db("crm").collection("clients");
+  const mongo = await obtenirClient();
+  const collection = mongo.db("crm").collection("clients");
 
   if (req.method === "GET" && pathname === "/api/clients") {
     const clients = await collection.find().sort({ _id: -1 }).toArray();
@@ -98,9 +106,9 @@ async function gererApi(req, res, pathname) {
   envoyerJson(res, 404, { message: "Route introuvable" });
 }
 
-const server = http.createServer(async (req, res) => {
+async function traiter(req, res) {
   try {
-    const url = new URL(req.url, `http://${req.headers.host}`);
+    const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
     if (url.pathname.startsWith("/api/")) {
       await gererApi(req, res, url.pathname);
       return;
@@ -109,18 +117,22 @@ const server = http.createServer(async (req, res) => {
   } catch {
     envoyerJson(res, 500, { message: "Erreur serveur" });
   }
-});
-
-async function start() {
-  await client.connect();
-  console.log("Connecte a MongoDB");
-
-  server.listen(PORT, () => {
-    console.log(`Serveur demarre sur http://localhost:${PORT}`);
-  });
 }
 
-start().catch((error) => {
-  console.error("Connexion MongoDB impossible:", error.message);
-  process.exit(1);
-});
+module.exports = traiter;
+
+if (require.main === module) {
+  const server = http.createServer(traiter);
+
+  obtenirClient()
+    .then(() => {
+      console.log("Connecte a MongoDB");
+      server.listen(PORT, () => {
+        console.log(`Serveur demarre sur http://localhost:${PORT}`);
+      });
+    })
+    .catch((error) => {
+      console.error("Connexion MongoDB impossible:", error.message);
+      process.exit(1);
+    });
+}

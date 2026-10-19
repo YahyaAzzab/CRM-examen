@@ -1,6 +1,12 @@
 # CRM
 
-Site en ligne : [https://yahyacrm.vercel.app](https://yahyacrm.vercel.app)
+## Liens Vercel
+
+- Accueil : [https://yahyacrm.vercel.app/](https://yahyacrm.vercel.app/)
+- Interface clients : [https://yahyacrm.vercel.app/crm](https://yahyacrm.vercel.app/crm)
+- Login : [https://yahyacrm.vercel.app/login](https://yahyacrm.vercel.app/login)
+- Sign up : [https://yahyacrm.vercel.app/sign-up](https://yahyacrm.vercel.app/sign-up)
+- API de test : [https://yahyacrm.vercel.app/api/test](https://yahyacrm.vercel.app/api/test)
 
 ## Lancer le projet
 

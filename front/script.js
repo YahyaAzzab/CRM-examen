@@ -55,4 +55,14 @@ formulaire.addEventListener("submit", async (event) => {
   await chargerClients();
 });
 
+async function afficherMessageTest() {
+  const reponse = await fetch("/api/test");
+  if (!reponse.ok) {
+    return;
+  }
+  const data = await reponse.json();
+  document.querySelector("#message-test").textContent = data.message;
+}
+
 chargerClients();
+afficherMessageTest();
